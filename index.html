@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CS194 Project2 Lucy Wang</title>
+	<link rel="stylesheet" type="text/css" href="website.css">
+	<link href='http://fonts.googleapis.com/css?family=Arial' rel='stylesheet'>
+</head>
+<body>
+
+<h1>Fun with Filters and Frequencies!</h1>
+<p class="author">Lucy Wang</p>
+
+<div>
+	<h3> 1.1 Finite Difference Operator</h3>
+		<p>In this part of the project, I computed the gradient magnitude of image by first computing its partial derivatives dy and dx, then combine them to form the edge image (dx, dy) = sqrt(dx^2 + dy^2). </p>
+
+		<div align='middle'>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img src="Part1/dx.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    dx
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1//dy.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+							dy
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/dxdy.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Edge image (dx,dy)
+						</figcaption>
+					</td>					
+				</tr>
+			</table>
+		</div>
+
+		<br>
+
+		<h3> 1.2 Derivative of Gaussian Filters</h3>
+		<p>Simply taking the derivate of image gives noisy result, therefore we could first apply a Gaussian filter to remove random noises, then apply the difference operator. First I chose a Gaussian filter with kernel_size=8, sigma=2 and apply to the image, then I run the same procedure as in 1.1. The resulting images are much more clean: </p>
+
+		<div align='middle'>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img src="Part1/gaussian_dx.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    dx after Gaussian filter
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1//gaussian_dy.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+							dy after Gaussian filter
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/gaussian_dxdy.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Edge image (dx, dy) after Gaussian filter
+						</figcaption>
+					</td>					
+				</tr>
+			</table>
+		</div>
+
+		<br>
+
+		<h3> 1.3 Image Straightening</h3>
+		<p>In this part, I explored automatic image straightening technique, which finds the totation angle that yields the maximum number of straight horizontal/vertical edges. The steps are below:
+			<ol>
+			<li>Rotate the image by the proposed rotation angle</li>
+			<li>Crop the center of the image, then compute the gradient angle of the edges in the image </li>
+			<li>Compute a histogram of these angles</li>
+			<li>Finally, pick the rotation with the maximum number of horizontal and vertical edges. </li>
+			</ol>
+		Here are some successful cases. 
+		</p>
+		<div align='middle'>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img src="facade.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    facade
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/facade_0degree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+							gradient angle of edges
+						</figcaption>
+					</td>					
+				</tr>
+
+				<tr>
+					<td>
+						<img src="Part1/facade_rotate.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    facade after straightening
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/facade_bestdegree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    gradient adngle of edges after straightening
+						</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="giraffe.jpg" align="middle" width="300px" />
+						<figcaption align="middle">
+						    giraffe
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/giraffe_0degree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+							gradient angle of edges
+						</figcaption>
+					</td>					
+				</tr>
+				<tr>
+					<td>
+						<img src="Part1/giraffe_rotate.jpg" align="middle" width="300px" />
+						<figcaption align="middle">
+						    giraffe after straightening
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/giraffe_bestdegree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    gradient adngle of edges after straightening
+						</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="pisa.jpg" align="middle" width="300px" />
+						<figcaption align="middle">
+						    Pisa Tower
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/pisa_0degree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+							gradient angle of edges
+						</figcaption>
+					</td>					
+				</tr>
+				<tr>
+					<td>
+						<img src="Part1/pisa_rotate.jpg" align="middle" width="300px" />
+						<figcaption align="middle">
+						    Pisa Tower after straightening
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/pisa_bestdegree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    gradient adngle of edges after straightening
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+			<h4 align='left'>Failure Case: </h4>
+			<p align='left'>The algporithm failed in the case of the lady image, as it detects that the image is already straight. This might due to image cropping before alignment. If the cropped image is too small, it will detect that it's already straight, therefore fail to rotate the image properly. </p>
+			<table>
+				
+				<tr>
+					<td>
+						<img src="lady.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    lady
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/lady_0degree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+							gradient angle of edges
+						</figcaption>
+					</td>					
+				</tr>
+				<tr>
+					<td>
+						<img src="Part1/lady_rotate.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    lady after straightening
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part1/lady_bestdegree.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    gradient adngle of edges after straightening
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<br>
+
+		<h3> 2.1 Image Sharpening</h3>
+		<p>Image sharpening is another technique that we often need. Here, I implemented an unsharp mask filter with the formula below to sharpen the image. We first produce a gaussian filter g, which is a low pass filter that blurs the image. Then we subtract the blured image from original image to get a high frequency image. We finally add the high frequency image back to original image to produce a "sharpened" effect. </p>
+		<img src="Part2/filter.png" height="150px">
+
+		<div align='middle'>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img src="Part2/taj.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    Taj Mahal
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part2/taj_sharpen.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+							Taj after sharpening
+						</figcaption>
+					</td>					
+				</tr>
+				<tr>
+					<td>
+						<img src="Part2/flag.jpg" align="middle" width="300px" />
+						<figcaption align="middle">
+						    Mission Church flat
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part2/flag_sharpen.jpg" align="middle" width="300px" />
+						<figcaption align="middle">
+							flag after sharpening
+						</figcaption>
+					</td>					
+				</tr>
+			</table>
+			<h4 align="left">Blur Then Sharpen</h4>
+			<p align="left">However, the "sharpening" effect does not actually sharp the image, since it didn't add additional information to the image. It's more of a visual effect that allows human to see the image as sharper. As shown below, if we take an originally sharp image, blur it, then try to apply the same sharpen technique, we can see that the image is not as sharp as before. </p>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img src="Part2/ponyo.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+						    Sharp image of Ponyo
+						</figcaption>
+					</td>
+					<td>
+						<img src="Part2/ponyo_blur.jpg" align="middle" width="400px" />
+						<figcaption align="middle">
+							Ponyo after blurring and re-sharpening
+						</figcaption>
+					</td>					
+				</tr>
+			</table>
+		</div>
+
+		<br>
+
+		<h3> 2.2 Hybrid Images</h3>
+		<p>In this section, I created images using the approach described in the SIGGRAPH 2006 <a
+		href="http://olivalab.mit.edu/publications/OlivaTorralb_Hybrid_Siggraph06.pdf">paper</a>
+		by Oliva, Torralba, and Schyns. As human perception is more sensitive to high frequency at a shorter distance but is more sensitive to low frequency at a farther distance, we can create images that leads to different interpretations at different distances. Given two images, I first applied low-pass filter one image, then applied high-pass filter from another image. Then aligning them using distances between eyes, and average these two images to create a hybrid image. If you view the hybrid images closely, you can see the high-pass filtered image, then if you step away a bit, you can see the low-pass filtered image. </p>
+		<p> For one of the images, I've also included the Fourier Transform graph for frequency analysis. You can see that in the hybrid images, it's a combination of high-frequency and low-frequency images. </p>
+		<p>Here are some of my hybrid images: </p>
+
+		<div align='middle'>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img src="hybrid_python/DerekPicture.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Derek
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/nutmeg.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+							and his cat Nutmeg
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/hybrid_cat.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Hybrid
+						</figcaption>
+					</td>					
+				</tr>
+				<tr>
+					<td>
+						<img src="hybrid_python/rick1.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Rick getting drunk
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/rick2.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+							Rick is smart
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/hybrid_rick.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Hybrid
+						</figcaption>
+					</td>	
+				</tr>
+				<tr>
+					<td>
+						<img src="hybrid_python/trump.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Trump
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/thanos.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+							Thanos 
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/hybrid_trump.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Hybrid
+						</figcaption>
+					</td>					
+				</tr>
+			</table>
+			<table style="width=100%">	
+				<tr>
+					<td>
+						<img id="small" src="hybrid_python/trump_fft.jpg" align="middle" width="150px" height="150px" />
+						<figcaption align="middle">
+						    FFT Trump
+						</figcaption>
+					</td>
+					<td>
+						<img id="small" src="hybrid_python/thanos_fft.jpg" align="middle" width="150px" height="150px" />
+						<figcaption align="middle">
+							FFT Thanos 
+						</figcaption>
+					</td>
+					<td>
+						<img id="small" src="hybrid_python/filter_thanos_fft.jpg" align="middle" width="150px" height="150px" />
+						<figcaption align="middle">
+							Thanos with high filter
+						</figcaption>
+					</td>
+					<td>
+						<img id="small" src="hybrid_python/filter_trump_fft.jpg" align="middle" width="150px" height="150px" />
+						<figcaption align="middle">
+						    Trump with low filter
+						</figcaption>
+					</td>
+					<td>
+						<img id="small" src="hybrid_python/hybrid_fft.jpg" align="middle" width="150px" height="150px" />
+						<figcaption align="middle">
+						    FFT Hybrid
+						</figcaption>
+					</td>					
+				</tr>				
+				
+			</table>
+			<h4 align="left">Failure Case</h4>
+			<p align="left"> Our hybriding algorithm doesn't work for the case below, mainly because there are no points could be used to align properly. The two images are simply too diverse to be blended well together.  </p>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img src="hybrid_python/cake.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Cake
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/ice_cream.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+							Ice cream
+						</figcaption>
+					</td>
+					<td>
+						<img src="hybrid_python/hybrid_icecream.jpg" align="middle" width="200px" />
+						<figcaption align="middle">
+						    Hybrid
+						</figcaption>
+					</td>					
+				</tr>	
+			</table>
+			<h4 align="left">Bells & Whistles</h4>
+			<p align="left"> I added color effects to the images, and I discovered that it's better to use color in low-pass filtered images, high-pass filters are unable to retain color well. </p>
+		</div>
+		<br>
+
+		<h3> 2.3 Gaussian & Laplacian Stacks</h3>
+		<p>Here, I implemented Gaussian and Laplacin stacks, which are high-frequency and low-frequency images extracted in different degrees. If I apply it to an image with multiresolution, we can see that the image starts from high frequency, then gradually shift towards low frequency. These stacks are useful tools when analyzing image beldnings. </p>
+		<div align='middle'>
+			<p align="left">Lincoln: Gaussian Stack</p>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img id="compact" src="stack/lincoln_low_0.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/lincoln_low_1.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/lincoln_low_2.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/lincoln_low_3.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/lincoln_low_4.jpg" align="middle" width="200px" />
+					</td>	
+				</tr>
+			</table>
+			<p align="left">Lincoln: Laplacian Stack</p>
+			<table>
+				<tr>
+					<td>
+						<img id="compact" src="stack/lincoln_high_0.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/lincoln_high_1.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/lincoln_high_2.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/lincoln_high_3.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/lincoln_high_4.jpg" align="middle" width="200px" />
+					</td>				
+				</tr>
+			</table>
+			<p align="left">Rick: Gaussian Stack</p>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img id="compact" src="stack/rick_low_0.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/rick_low_1.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/rick_low_2.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/rick_low_3.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/rick_low_4.jpg" align="middle" width="200px" />
+					</td>	
+				</tr>
+			</table>
+			<p align="left">Rick: Laplacian Stack</p>
+			<table>
+				<tr>
+					<td>
+						<img id="compact" src="stack/rick_high_0.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/rick_high_1.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/rick_high_2.jpg" align="middle" width="200px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/rick_high_3.jpg" align="middle" width="200px" />
+					</td>	
+					<td>
+						<img id="compact" src="stack/rick_high_4.jpg" align="middle" width="200px" />
+					</td>				
+				</tr>
+			</table>
+		</div>
+
+		<br>
+
+		<h3> 2.4 Multiresolution Blending</h3>
+		<p>In this part, I implemented algorithms to blend two images seamlessly using a multi resolution blending as described in the 1983 <a href="http://persci.mit.edu/pub_pdfs/spline83.pdf">paper</a> by Burt and Adelson. I first computed Laplacian stacks for each individual image, then created a mask specifying which part of the image I want to blend. (The mask can be irregular, resulting in interesting effects). I then use the following formula to mask the image for each Laplacian Stack. I finally combine all layers together through summation. The results are reproduced below: </p>
+		<img src="spline/formula.png" height="80px">
+
+		<div align='middle'>
+			<table style="width=100%">
+				<tr>
+					<td>
+						<img id="compact" src="spline/apple.jpeg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Apple
+						</figcaption>
+					</td>
+					<td>
+						<img id="compact" src="spline/orange.jpeg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Orange
+						</figcaption>
+					</td>		
+					<td>
+						<img id="compact" src="stack/oranple.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Blended
+						</figcaption>
+					</td>
+					<td>
+						<img id="compact" src="stack/mask_oranple_low_1.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Mask
+						</figcaption>
+					</td>		
+				</tr>
+			</table>
+			<table>
+				<tr>
+					<td>
+						<img id="compact" src="spline/eye1.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Blue Eye
+						</figcaption>
+					</td>
+					<td>
+						<img id="compact" src="spline/eye2.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Brown Eye
+						</figcaption>
+					</td>		
+					<td>
+						<img id="compact" src="stack/eyes_blend.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Blended
+						</figcaption>
+					</td>
+					<td>
+						<img id="compact" src="stack/mask_eyes_low_1.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Mask
+						</figcaption>
+					</td>		
+				</tr>
+			</table>
+			<table>
+				<tr>
+					<td>
+						<img id="compact" src="spline/mountain.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Mountain
+						</figcaption>
+					</td>
+					<td>
+						<img id="compact" src="spline/moon.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Moon
+						</figcaption>
+					</td>		
+					<td>
+						<img id="compact" src="stack/sky_blend.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Blended
+						</figcaption>
+					</td>
+					<td>
+						<img id="compact" src="stack/irregular_mask.jpg" align="middle" width="250px" />
+						<figcaption align="middle">
+						    Mask
+						</figcaption>
+					</td>		
+				</tr>
+			</table>
+			<p>Here is a Lapacian stack for Oranple image:</p>
+			<table>
+				<tr>
+					<td>
+						<img id="compact" src="stack/apple_high_r_1.jpg" align="middle" width="250px" />
+					</td>		
+					<td>
+						<img id="compact" src="stack/orange_high_r_1.jpg" align="middle" width="250px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/oranple_0.jpg" align="middle" width="250px" />
+					</td>		
+				</tr>
+				<tr>
+					<td>
+						<img id="compact" src="stack/apple_high_r_2.jpg" align="middle" width="250px" />
+					</td>		
+					<td>
+						<img id="compact" src="stack/orange_high_r_2.jpg" align="middle" width="250px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/oranple_1.jpg" align="middle" width="250px" />
+					</td>		
+				</tr>
+				<tr>
+					<td>
+						<img id="compact" src="stack/apple_high_r_3.jpg" align="middle" width="250px" />
+					</td>		
+					<td>
+						<img id="compact" src="stack/orange_high_r_3.jpg" align="middle" width="250px" />
+					</td>
+					<td>
+						<img id="compact" src="stack/oranple_2.jpg" align="middle" width="250px" />
+					</td>		
+				</tr>
+			</table>
+		</div>
+		<h4>Bells & Whistles</h4>
+		<p>I implemented the multiresolution blending in color by first producing laplacian stacks for each color channel, masks them individually, finally combine them together. Image blending is very cool as now I can concatenate my favorite characters together and it looks nice!</p>
+</div>
+
+
+
+</body>
+</html>
